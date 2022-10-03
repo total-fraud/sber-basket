@@ -10,16 +10,17 @@ const clientBasketSlice = createSlice({
     initialState,
     reducers: {
         buyFromStore(state, action) {
-            const product = action.payload
-            const findItem = state.items.find((obj) => obj.id === product.id)
-            if (findItem) {
-                findItem.quantity += action.payload.quantity
-            } else {
-                state.items.push({
-                    ...action.payload,
-                    quantity: 1,
-                });
-            }
+            const products = action.payload
+            products.forEach(el => {
+                const findItem = state.items.find((obj) => obj.id === el.id)
+                if (findItem) {
+                    findItem.quantity += action.payload.quantity
+                } else {
+                    state.items.push(el);
+                }
+            })
+
+
 
         }
     }

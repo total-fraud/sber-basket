@@ -20,10 +20,14 @@ const depositSlice = createSlice({
                     quantity: num,
                 });
             }
-            state.money += product.price
+            state.money += product.price * num
+        },
+        clearDeposit(state) {
+            state.items = []
+            state.money = 0
         }
     }
 });
 
-export const {toDeposit} = depositSlice.actions
+export const {toDeposit, clearDeposit} = depositSlice.actions
 export default depositSlice.reducer;
