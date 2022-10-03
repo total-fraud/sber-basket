@@ -1,0 +1,24 @@
+.App {
+    text-align: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+
+}
+
+.clientBasket, .checkoutBasket, .storeBasket {
+    height: 100vmax;
+    border: 2px solid blueviolet;
+    background-color: #e8dfd9;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.clientBasket, .checkoutBasket, .storeBasket > :nth-of-type(2) {
+    border-top: 2px solid aquamarine;
+}
+
+.productRow {
+    background-color: beige;
+    border: 1px solid aquamarine;
+}
