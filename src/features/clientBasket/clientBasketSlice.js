@@ -1,4 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
+import {buyFrom, moneyExchange, removeProduct} from "../../app/hor";
 
 const initialState = {
     items: [],
@@ -10,21 +11,16 @@ const clientBasketSlice = createSlice({
     initialState,
     reducers: {
         buyFromStore(state, action) {
-            const products = action.payload
-            products.forEach(el => {
-                const findItem = state.items.find((obj) => obj.id === el.id)
-                if (findItem) {
-                    findItem.quantity += action.payload.quantity
-                } else {
-                    state.items.push(el);
-                }
-            })
-
-
-
+            buyFrom(state, action)
+        },
+        removeFromClient(state, action) {
+            removeProduct(state, action)
+        },
+        moneyExchangeClient(state, action) {
+            moneyExchange(state, action)
         }
     }
 });
 
-export const {buyFromStore} = clientBasketSlice.actions
+export const {buyFromStore, moneyExchangeClient, removeFromClient} = clientBasketSlice.actions
 export default clientBasketSlice.reducer;
