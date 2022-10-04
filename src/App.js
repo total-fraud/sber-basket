@@ -2,14 +2,18 @@ import React, {useEffect, useState} from 'react';
 import './App.css';
 import {getProducts} from "./app/api";
 import {useAppDispatch, useAppSelector} from "./app/hooks";
+import {clearDeposit, toDeposit} from "./features/deposit/depositSlice";
+import {buyFromStore, moneyExchangeClient, removeFromClient} from "./features/clientBasket/clientBasketSlice";
+import Basket from "./components/Basket";
+import Modal from "./components/Modal";
+import Range from "./components/Range";
 import {
     buyFromClient,
     moneyExchangeStore,
     receivedProducts,
     removeFromStore
 } from "./features/storeBasket/storeBasketSlice";
-import {clearDeposit, toDeposit} from "./features/deposit/depositSlice";
-import {buyFromStore, moneyExchangeClient, removeFromClient} from "./features/clientBasket/clientBasketSlice";
+import Button from "./components/Button";
 
 function App() {
     const storeProducts = useAppSelector(state => state.storeBasket.items)
@@ -28,9 +32,16 @@ function App() {
     const getDepositMode = () => {
         if (depositMode === "clientWillBuy") return "Покупка"
         if (depositMode === "storeWillBuy") return "Продажа"
+        else return ""
     }
 
-    const getToModal = (product) => {
+    const getToModal = (product, type) => {
+        if (type === "clientWillBuy") {
+            setDepositMode(type)
+        }
+        if (type === "storeWillBuy") {
+            setDepositMode(type)
+        }
         setProductForModal(product)
     }
 
@@ -63,18 +74,29 @@ function App() {
         }
     }
 
+    const checkExchangeParams = () => {
+        if (depositMode === "clientWillBuy" && enoughMoneyCheck(clientMoney)) {
+            exchange(depositMoney, "toClient")
+        }
+        if (depositMode === "storeWillBuy" && enoughMoneyCheck(storeMoney)) {
+            exchange(depositMoney, "toStore")
+        } else if (!enoughMoneyCheck(clientMoney) || !enoughMoneyCheck(storeMoney)) {
+            setAlertModal(true)
+        }
+    }
+
     const exchange = (moneySum, toWho) => {
         if (toWho === "toClient" && enoughMoneyCheck(clientMoney)) {
             getFromDepositToTarget(depositProducts, toWho)
             dispatch(moneyExchangeStore(moneySum))
             dispatch(moneyExchangeClient(-moneySum))
+            setDepositMode(null)
         }
         if (toWho === "toStore" && enoughMoneyCheck(storeMoney)) {
             getFromDepositToTarget(depositProducts, toWho)
             dispatch(moneyExchangeStore(-moneySum))
             dispatch(moneyExchangeClient(moneySum))
-        } else {
-            setAlertModal(true)
+            setDepositMode(null)
         }
     }
 
@@ -91,63 +113,39 @@ function App() {
 
 
     return (<div className="App">
-            {alertModal && <div className="modal">Денег не достаточно</div>}
-            {productForModal && <div className="modal">
+            <Basket title={"Корзина покупателя"}
+                    money={clientMoney}
+                    items={clientProducts}
+                    type={"storeWillBuy"}
+                    callback={getToModal}/>
+
+            <Basket title={`Статус покупки/продажи: ${getDepositMode(depositMode)} `}
+                    money={depositMoney}
+                    items={depositProducts}
+            />
+
+            <Basket title={"Корзина продавца"}
+                    money={storeMoney}
+                    items={storeProducts}
+                    type={"clientWillBuy"}
+                    callback={getToModal}/>
+            {alertModal && <Modal show={alertModal}>Денег не достаточно</Modal>}
+            {productForModal && <Modal>
                 {productForModal.Name}
-                <div><input value={rangeVal} onChange={(e) => setRangeVal(e.target.value)} type="range"
-                            min="1" max={productForModal.quantity}/>
-                    {rangeVal}
-                    <label>Укажите количество (от 1 до {productForModal.quantity})</label>
-                </div>
-                <button onClick={() => {
+                <Range rangeVal={rangeVal} setRangeVal={setRangeVal} max={productForModal.quantity}/>
+                <Button callback={() => {
                     getFromModalToDeposit(productForModal, Number(rangeVal))
                     removeProduct(productForModal, Number(rangeVal), depositMode)
                     clearModalStack()
                     setRangeVal(1)
                 }}>Подтвердить
-                </button>
-            </div>}
+                </Button>
+            </Modal>}
+            {depositMode &&
+                <Button callback={() => checkExchangeParams()}>
+                    Подтвердить сделку
+                </Button>}
 
-            {depositMode && <button className="doIt" onClick={() => {
-                if (depositMode === "clientWillBuy") {
-                    exchange(depositMoney, "toClient")
-                }
-                if (depositMode === "storeWillBuy") {
-                    exchange(depositMoney, "toStore")
-                }
-                setDepositMode(null)
-            }}>Подтвердить
-                сделку</button>}
-
-            <div className="clientBasket">
-                <div>Корзина покупателя {clientMoney}$</div>
-                <div>{clientProducts.map(el => {
-                    return <div key={el.id}
-                                onClick={() => {
-                                    setDepositMode("storeWillBuy")
-                                    getToModal(el)
-                                }}
-                                className="productRow">{`${el.Name} $${el.price} (${el.quantity})`}</div>
-                })}</div>
-            </div>
-
-            <div className="checkoutBasket">
-                <div>Статус покупки/продажи: {getDepositMode(depositMode)} {depositMoney}$</div>
-                <div>{depositProducts.map(el => {
-                    return <div key={el.id}
-                                className="productRow">{`${el.Name} $${el.price} (${el.quantity})`}</div>
-                })}</div>
-            </div>
-
-            <div className="storeBasket">
-                <div>Корзина продавца {storeMoney}$</div>
-                {storeProducts.map(el => {
-                    return <div key={el.id} onClick={() => {
-                        setDepositMode("clientWillBuy")
-                        getToModal(el)
-                    }}
-                                className="productRow">{`${el.Name} $${el.price} (${el.quantity})`}</div>
-                })}</div>
         </div>
 
     );

@@ -4,7 +4,7 @@
     grid-template-columns: 1fr 1fr 1fr;
 }
 
-.clientBasket, .checkoutBasket, .storeBasket {
+.basket {
     height: 100vmax;
     border: 2px solid blueviolet;
     background-color: #e8dfd9;
@@ -12,7 +12,7 @@
     flex-direction: column;
 }
 
-.clientBasket, .checkoutBasket, .storeBasket > :nth-of-type(2) {
+.basket > :nth-of-type(2) {
     border-top: 2px solid aquamarine;
 }
 
@@ -27,11 +27,12 @@
     background-color: whitesmoke;
     position: absolute;
     top: 200px;
-    left: calc(50vw - 200px);
+    left: calc(50% - 200px);
     display: flex;
     flex-direction: column;
     align-items: center;
 }
+
 
 .modal button {
     width: 50%;
@@ -42,9 +43,9 @@
     flex-direction: column;
 }
 
-.doIt {
+.App > button {
     position: fixed;
-    right: calc(50% - 100px);
+    right: calc(50% - 60px);
     bottom: 100px;
     width: 100px;
     height: 50px;
