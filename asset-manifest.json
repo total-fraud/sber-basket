@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/sber-basket/static/css/main.56ea7ae0.css",
+    "main.js": "/sber-basket/static/js/main.39e574d1.js",
+    "index.html": "/sber-basket/index.html",
+    "main.56ea7ae0.css.map": "/sber-basket/static/css/main.56ea7ae0.css.map",
+    "main.39e574d1.js.map": "/sber-basket/static/js/main.39e574d1.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.56ea7ae0.css",
+    "static/js/main.39e574d1.js"
+  ]
+}
