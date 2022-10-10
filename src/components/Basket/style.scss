@@ -15,6 +15,7 @@
   }
 
   .productRow {
+    padding: 2px 5px;
     border-radius: 5px;
     margin-bottom: 5px;
     text-align: right;
@@ -24,7 +25,6 @@
   }
 
   .productRow:hover {
-    transform: scale(105%);
     box-shadow: 0 0 5px 0 greenyellow;
   }
 

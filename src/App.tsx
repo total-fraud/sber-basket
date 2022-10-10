@@ -20,6 +20,8 @@ import {
     returnProductsToStore
 } from "./features/storeBasket/storeBasketSlice";
 import Button, {BtnTheme} from "./components/Button";
+import useAlert from "./hooks/useAlert";
+import {enoughMoneyCheck, getDepositMode} from "./functions";
 
 function App() {
     const storeProducts = useAppSelector(state => state.storeBasket.items)
@@ -30,36 +32,18 @@ function App() {
     const depositMoney = useAppSelector(state => state.deposit.money)
     const dispatch = useAppDispatch()
 
-
-    const [depositMode, setDepositMode] = useState<ProductType>(ProductType.DepositClosed) //clientWillBuy покупка из магазина, storeWillBuy продажа от клиента
+    const [depositMode, setDepositMode] = useState<ProductType>(ProductType.DepositClosed)
     const [rangeVal, setRangeVal] = useState<number>(1)
     const [productForModal, setProductForModal] = useState<Product>()
-    const [alertModal, setAlertModal] = useState(false)
-    const [depositSell, setDepositSell] = useState(false)
-
-    const getDepositMode = () => {
-        if (depositMode === ProductType.ClientWillBuy) return "Покупка"
-        if (depositMode === ProductType.StoreWillBuy) return "Продажа"
-        else return ""
-    }
-
+    const [depositSell, setDepositSell] = useState<boolean>(false)
+    const {alert, toggleAlert} = useAlert()
 
     const getToModal = (product: Product, type: ProductType, depositItem?: boolean): void => {
         setDepositSell(false)
-        if (type === ProductType.ClientWillBuy) {
-            setDepositMode(type)
-        }
-        if (type === ProductType.StoreWillBuy) {
-            setDepositMode(type)
-        }
-        if (depositItem) {
-            setDepositSell(true)
-        }
+        if (type === ProductType.ClientWillBuy) setDepositMode(type)
+        if (type === ProductType.StoreWillBuy) setDepositMode(type)
+        if (depositItem) setDepositSell(true)
         setProductForModal(product)
-    }
-
-    const enoughMoneyCheck = (cash: number) => {
-        return depositMoney < cash
     }
 
     const getFromModalToDeposit = (product: Product, num: number) => {
@@ -87,31 +71,28 @@ function App() {
         }
     }
 
-
     const checkExchangeParams = () => {
-        if (depositMode === ProductType.ClientWillBuy && enoughMoneyCheck(clientMoney)) {
+        if (depositMode === ProductType.ClientWillBuy && enoughMoneyCheck(clientMoney, depositMoney)) {
             exchange(depositMoney, ProductType.ClientWillBuy)
         }
-        if (depositMode === ProductType.StoreWillBuy && enoughMoneyCheck(storeMoney)) {
+        if (depositMode === ProductType.StoreWillBuy && enoughMoneyCheck(storeMoney, depositMoney)) {
             exchange(depositMoney, ProductType.StoreWillBuy)
-        } else if (!enoughMoneyCheck(clientMoney) || !enoughMoneyCheck(storeMoney)) {
-            setAlertModal(true)
+        } else if (!enoughMoneyCheck(clientMoney, depositMoney) || !enoughMoneyCheck(storeMoney, depositMoney)) {
+            toggleAlert()
         }
     }
 
     const exchange = (moneySum: number, toWho: ProductType) => {
-        if (toWho === ProductType.ClientWillBuy && enoughMoneyCheck(clientMoney)) {
-            getFromDepositToTarget(depositProducts, toWho)
+        if (toWho === ProductType.ClientWillBuy) {
             dispatch(moneyExchangeStore(moneySum))
             dispatch(moneyExchangeClient(-moneySum))
-            setDepositMode(ProductType.DepositClosed)
         }
-        if (toWho === ProductType.StoreWillBuy && enoughMoneyCheck(storeMoney)) {
-            getFromDepositToTarget(depositProducts, toWho)
+        if (toWho === ProductType.StoreWillBuy) {
             dispatch(moneyExchangeStore(-moneySum))
             dispatch(moneyExchangeClient(moneySum))
-            setDepositMode(ProductType.DepositClosed)
         }
+        getFromDepositToTarget(depositProducts, toWho)
+        setDepositMode(ProductType.DepositClosed)
     }
 
     const returnItems = (toWho: ProductType) => {
@@ -127,23 +108,15 @@ function App() {
             }
             dispatch(removeFromDeposit({product, num}))
             dispatch(moneyExchangeDeposit(-(product.price * num)))
-
-            clearModalStack()
+            setProductForModal(undefined)
         }
     }
-
-
-    const clearModalStack = () => {
-        setProductForModal(undefined)
-    }
-
 
     useEffect(() => {
         getProducts().then((products) => {
             dispatch(receivedProducts(products))
         })
     }, [])
-
 
     return (<div className="App">
             <Basket title={"Корзина покупателя"}
@@ -152,7 +125,7 @@ function App() {
                     type={ProductType.StoreWillBuy}
                     callback={getToModal}/>
 
-            <Basket title={`Статус покупки/продажи: ${getDepositMode()} `}
+            <Basket title={`Статус покупки/продажи: ${getDepositMode(depositMode)} `}
                     money={depositMoney}
                     items={depositProducts} type={ProductType.DepositClosed}
                     deposit={true}
@@ -164,8 +137,8 @@ function App() {
                     items={storeProducts}
                     type={ProductType.ClientWillBuy}
                     callback={getToModal}/>
-            {alertModal && <Modal closeCallback={() => setAlertModal(false)}>Денег не достаточно</Modal>}
-            {productForModal && <Modal closeCallback={() => clearModalStack()}>
+            {alert && <Modal closeCallback={() => toggleAlert()}>Денег не достаточно</Modal>}
+            {productForModal && <Modal closeCallback={() => setProductForModal(undefined)}>
                 {productForModal.Name}
                 <Range rangeVal={rangeVal} setRangeVal={setRangeVal} max={productForModal.quantity}/>
                 <Button theme={BtnTheme.basic} callback={() => {
@@ -174,10 +147,9 @@ function App() {
                     } else {
                         getFromModalToDeposit(productForModal, Number(rangeVal))
                         removeProduct(productForModal, Number(rangeVal), depositMode)
-                        clearModalStack()
+                        setProductForModal(undefined)
                         setRangeVal(1)
                     }
-
                 }}>Подтвердить
                 </Button>
             </Modal>}
@@ -186,9 +158,7 @@ function App() {
                     Подтвердить сделку
                 </Button>}
         </div>
-
     );
-
 }
 
 export default App;
