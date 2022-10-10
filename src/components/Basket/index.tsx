@@ -1,5 +1,6 @@
 import React from "react";
 import {Product, ProductType} from "../../app/api";
+import "./style.scss"
 
 export interface BasketProps {
     title: string,

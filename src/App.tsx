@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import './App.css';
+import './App.scss';
 import {getProducts, Product, ProductType} from "./app/api";
 import {useAppDispatch, useAppSelector} from "./app/hooks";
 import {clearDeposit, moneyExchangeDeposit, removeFromDeposit, toDeposit} from "./features/deposit/depositSlice";

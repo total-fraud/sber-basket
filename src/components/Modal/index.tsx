@@ -1,5 +1,6 @@
 import React from "react"
 import Button, {BtnTheme} from "../Button";
+import "./style.scss"
 
 export interface Modal {
     children: React.ReactNode,

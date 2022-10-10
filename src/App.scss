@@ -1,0 +1,14 @@
+.App {
+    text-align: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.App > button {
+    position: fixed;
+    right: calc(50% - 60px);
+    bottom: 100px;
+    width: 100px;
+    height: 50px;
+    cursor: pointer;
+}

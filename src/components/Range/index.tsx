@@ -1,4 +1,5 @@
 import React, {Dispatch, SetStateAction} from "react";
+import "./style.scss"
 
 export interface RangeProps {
     rangeVal: number,

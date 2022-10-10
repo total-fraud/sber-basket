@@ -1,0 +1,32 @@
+.basket {
+  height: 100vh;
+  border: 2px solid whitesmoke;
+  background-color: #e8dfd9;
+  display: flex;
+  flex-direction: column;
+
+  .basketBody {
+    overflow: auto;
+    padding: 0 10px;
+  }
+
+  .basket > :nth-of-type(2) {
+
+  }
+
+  .productRow {
+    border-radius: 5px;
+    margin-bottom: 5px;
+    text-align: right;
+    background-color: whitesmoke;
+    cursor: pointer;
+    transition: .2ms;
+  }
+
+  .productRow:hover {
+    transform: scale(105%);
+    box-shadow: 0 0 5px 0 greenyellow;
+  }
+
+}
+
