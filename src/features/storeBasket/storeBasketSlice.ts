@@ -1,7 +1,13 @@
-import {createSlice} from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {buyFrom, moneyExchange, removeProduct} from "../../app/hor";
+import {Product} from "../../app/api";
 
-const initialState = {
+export interface BasketState {
+    items: Product[],
+    money: number
+}
+
+const initialState: BasketState= {
     items: [],
     money: 15000
 }
@@ -10,7 +16,7 @@ const storeBasketSlice = createSlice({
     name: "products",
     initialState,
     reducers: {
-        receivedProducts(state, action) {
+        receivedProducts(state, action: PayloadAction<Product[]>) {
             const products = action.payload
             products.forEach((product, id) => {
                 state.items[id] = product

@@ -1,4 +1,15 @@
-const Basket = ({title, money, items,  type, callback = () => {
+import React from "react";
+import {Product, ProductType} from "../../app/api";
+
+export interface BasketProps {
+    title: string,
+    money: number,
+    items: Product[],
+    type: ProductType,
+    callback?: (el: Product, type: ProductType) => void
+}
+
+const Basket: React.FC<BasketProps> = ({title, money, items,  type, callback = () => {
         console.log("No action for this list");
     },
                 }) => {

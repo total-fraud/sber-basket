@@ -1,7 +1,10 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {buyFrom, moneyExchange, removeProduct} from "../../app/hor";
+import {BasketState} from "../storeBasket/storeBasketSlice";
 
-const initialState = {
+
+
+const initialState: BasketState = {
     items: [],
     money: 3000
 }
