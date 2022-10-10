@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {buyFrom, moneyExchange, removeProduct} from "../../app/hor";
+import {buyFrom, moneyExchange, removeProduct, returnProducts} from "../../app/hor";
 import {Product} from "../../app/api";
 
 export interface BasketState {
@@ -7,7 +7,7 @@ export interface BasketState {
     money: number
 }
 
-const initialState: BasketState= {
+const initialState: BasketState = {
     items: [],
     money: 15000
 }
@@ -30,9 +30,18 @@ const storeBasketSlice = createSlice({
         },
         moneyExchangeStore(state, action) {
             moneyExchange(state, action)
+        },
+        returnProductsToStore(state, action) {
+            returnProducts(state, action)
         }
     }
 });
 
-export const {receivedProducts, removeFromStore, moneyExchangeStore, buyFromClient} = storeBasketSlice.actions
+export const {
+    receivedProducts,
+    removeFromStore,
+    moneyExchangeStore,
+    buyFromClient,
+    returnProductsToStore
+} = storeBasketSlice.actions
 export default storeBasketSlice.reducer;

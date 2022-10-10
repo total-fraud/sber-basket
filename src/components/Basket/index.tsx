@@ -6,19 +6,18 @@ export interface BasketProps {
     money: number,
     items: Product[],
     type: ProductType,
-    callback?: (el: Product, type: ProductType) => void
+    callback: (el: Product, type: ProductType, deposit?: boolean) => void,
+    deposit?: boolean
 }
 
-const Basket: React.FC<BasketProps> = ({title, money, items,  type, callback = () => {
-        console.log("No action for this list");
-    },
-                }) => {
+const Basket: React.FC<BasketProps> = ({title, money, items, type, callback, deposit
+                                       }) => {
 
     return <div className="basket">
         <div>{title} {money}$</div>
-        <div>{items.map(el => {
+        <div className="basketBody">{items.map(el => {
             return <div key={el.id}
-                        onClick={() => callback(el, type)}
+                        onClick={() => callback(el, type, deposit)}
                         className="productRow"
             >{`${el.Name} $${el.price} (${el.quantity})`}</div>
         })}</div>

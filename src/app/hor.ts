@@ -10,6 +10,19 @@ export const removeProduct = (state: BasketState, action:  PayloadAction<{produc
         findItem.quantity -= num
     } else {
         state.items.splice(findItemIdx, 1)
+
+    }
+}
+
+export const returnProducts = (state: BasketState, action: PayloadAction<{product: Product, num: number}>) => {
+    const {product, num} = action.payload
+    const findItem = state.items.find(el => el.id === product.id)
+    const findItemIdx = state.items.findIndex(el => el.id === product.id)
+    if (findItem) {
+        findItem.quantity += num
+    } else {
+        state.items.push({...product, quantity: num})
+
     }
 }
 

@@ -1,7 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {buyFrom, moneyExchange, removeProduct} from "../../app/hor";
+import {buyFrom, moneyExchange, removeProduct, returnProducts} from "../../app/hor";
 import {BasketState} from "../storeBasket/storeBasketSlice";
-
 
 
 const initialState: BasketState = {
@@ -21,9 +20,12 @@ const clientBasketSlice = createSlice({
         },
         moneyExchangeClient(state, action) {
             moneyExchange(state, action)
+        },
+        returnProductsToClient(state, action) {
+            returnProducts(state, action)
         }
     }
 });
 
-export const {buyFromStore, moneyExchangeClient, removeFromClient} = clientBasketSlice.actions
+export const {buyFromStore, moneyExchangeClient, removeFromClient, returnProductsToClient} = clientBasketSlice.actions
 export default clientBasketSlice.reducer;

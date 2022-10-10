@@ -1,6 +1,7 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {BasketState} from "../storeBasket/storeBasketSlice";
 import {Product} from "../../app/api";
+import {moneyExchange, removeProduct} from "../../app/hor";
 
 export type DepositProduct = {
     product: Product,
@@ -32,9 +33,15 @@ const depositSlice = createSlice({
         clearDeposit(state) {
             state.items = []
             state.money = 0
+        },
+        removeFromDeposit(state, action) {
+            removeProduct(state, action)
+        },
+        moneyExchangeDeposit(state, action) {
+            moneyExchange(state, action)
         }
     }
 });
 
-export const {toDeposit, clearDeposit} = depositSlice.actions
+export const {toDeposit, clearDeposit, removeFromDeposit, moneyExchangeDeposit} = depositSlice.actions
 export default depositSlice.reducer;
